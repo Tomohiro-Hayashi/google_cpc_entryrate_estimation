@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
 import ipdb
@@ -8,6 +9,7 @@ from statistics import mean, median, variance, stdev
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import pickle
 
 #訓練データ,ユーザー抽出データ、どちらを前処理するのか選ぶ
 args = sys.argv
@@ -150,8 +152,9 @@ for name in explain:
 if args[1] == 'train':
     explain.append('entry_flg')
     data[explain].to_csv("preprocess/preprocess.csv")
+    explain.remove('entry_flg')
     object = 'entry_flg'
-    pca = PCA()
+    pca = PCA(n_components=20)
     feature = pca.fit(data[explain])
     feature = pca.transform(data[explain])
     feature = pd.DataFrame(feature)
@@ -162,10 +165,12 @@ if args[1] == 'train':
     plt.ylabel("Cumulative contribution rate")
     plt.grid()
     plt.show()
-
-    ipdb.set_trace()
-
     feature.to_csv("preprocess/preprocess_pca.csv")
+    pickle.dump(pca, open('preprocess/pca_model.sav', 'wb'))
+    ipdb.set_trace()
 elif args[1] == 'scoring':
     data[explain].to_csv("preprocess/preprocess_scoring.csv")
+    pca = pickle.load(open('preprocess/pca_model.sav', 'rb'))
+    feature = pca.transform(data[explain])
+    feature = pd.DataFrame(feature)
     feature.to_csv("preprocess/preprocess_scoring_pca.csv")

@@ -83,13 +83,16 @@ if args[1] == 'normal':
 elif args[1] == 'pca':
     data = pd.read_csv("preprocess/preprocess_pca.csv")
     explain = [
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
-       '11', '12', '13', '14', '15', '16', '17', '18', '19',
-       # '20',
-       # '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
-       # '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
-       # '41', '42', '43', '44', '45', '46', '47', '48', '49', '50',
-       # '51', '52', '53', '54',
+        '0', '1', '2', '3', '4',
+        '5', '6', '7', '8', '9',
+        '10', '11', '12', '13', '14',
+        '15', '16', '17', '18', '19',
+        # '20', '21', '22', '23', '24',
+        # '25', '26', '27', '28', '29',
+        # '30', '31', '32', '33', '34',
+        # '35', '36', '37', '38', '39',
+        # '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50',
+        # '51', '52', '53', '54',
     ]
 object = 'entry_flg'
 
@@ -155,13 +158,14 @@ for key in coef:
     print(key, ':', coef[key])
 print('------------------')
 
-ipdb.set_trace()
-
 X_test['Y_prob'] = Y_prob
 X_test.to_csv("prediction/試験データ_検証.csv")
 
 ##ターゲットユーザーへスコアを書き込む
-target = pd.read_csv("preprocess/preprocess_scoring.csv")
+if args[1] == 'normal':
+    target = pd.read_csv("preprocess/preprocess_scoring.csv")
+elif args[1] == 'pca':
+    target = pd.read_csv("preprocess/preprocess_scoring_pca.csv")
 prob = model.predict_proba(target[explain])
 target['Y_prob'] = prob[:,1]
 target = target.sort_values(by = 'Y_prob', ascending = False)
